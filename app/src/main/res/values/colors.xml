@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- vit text med 75 % opacitet -->
-    <color name="text">#BFFFFFFF</color>
-    <!-- grön med 50 % opacitet: den fyllda delen av mätaren -->
-    <color name="bar_fill">#8000FF00</color>
-    <!-- svart med 50 % opacitet: den tomma delen av mätaren -->
-    <color name="bar_empty">#80000000</color>
-    <!-- röd med 50 % opacitet: den tomma delen av mätaren vid låg nivå -->
-    <color name="bar_empty_low">#80FF0000</color>
+    <!-- Standardvärden finns i Settings.java; färgerna väljs av användaren i inställningarna. -->
 </resources>

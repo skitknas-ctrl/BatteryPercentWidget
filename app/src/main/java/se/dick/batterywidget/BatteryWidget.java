@@ -88,7 +88,7 @@ public class BatteryWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_battery);
         int percent = readBatteryPercent(context);
         views.setImageViewBitmap(R.id.widget_image,
-                renderWidget(context, percent, widgetAspect(manager, id)));
+                renderWidget(context, Settings.load(context), percent, widgetAspect(manager, id)));
 
         // Klick på widgeten ritar om den
         Intent refresh = new Intent(context, BatteryWidget.class).setAction(ACTION_REFRESH);
@@ -107,8 +107,24 @@ public class BatteryWidget extends AppWidgetProvider {
         return (w > 0 && h > 0) ? (float) h / w : 1.5f;
     }
 
-    /** Ritar hela widgeten: mätaren i ramens fönster, ramen i tre delar, texten överst. */
-    static Bitmap renderWidget(Context context, int percent, float aspect) {
+    /** Ritar hela widgeten i rutans proportioner och krymper den enligt storleksinställningen. */
+    static Bitmap renderWidget(Context context, Settings settings, int percent, float aspect) {
+        Bitmap full = renderFull(context, settings, percent, aspect);
+        if (settings.scale >= 100) {
+            return full;
+        }
+        int W = full.getWidth(), H = full.getHeight();
+        Bitmap out = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888);
+        float f = settings.scale / 100f;
+        float dw = W * f, dh = H * f;
+        float left = (W - dw) / 2f, top = (H - dh) / 2f;
+        new Canvas(out).drawBitmap(full, null, new RectF(left, top, left + dw, top + dh),
+                new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+        return out;
+    }
+
+    /** Ritar mätaren i ramens fönster, ramen i tre delar och texten överst, i full storlek. */
+    static Bitmap renderFull(Context context, Settings settings, int percent, float aspect) {
         int W = RENDER_WIDTH;
         int H = Math.max(1, Math.round(W * aspect));
         Bitmap out = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888);
@@ -141,9 +157,9 @@ public class BatteryWidget extends AppWidgetProvider {
         float bt = winTop;
         float bb = middleBottom + (BAR_BOTTOM - CAP_BOTTOM_START) * fh * scale;
         float fillTop = bb - (bb - bt) * Math.max(0, Math.min(100, percent)) / 100f;
-        paint.setColor(context.getColor(percent <= LOW_THRESHOLD ? R.color.bar_empty_low : R.color.bar_empty));
+        paint.setColor(percent <= LOW_THRESHOLD ? settings.barEmptyLowColor() : settings.barEmptyColor());
         canvas.drawRect(bl, bt, br, fillTop, paint);
-        paint.setColor(context.getColor(R.color.bar_fill));
+        paint.setColor(settings.barFillColor());
         canvas.drawRect(bl, fillTop, br, bb, paint);
 
         // Lager 2: ramen i tre delar
@@ -157,7 +173,7 @@ public class BatteryWidget extends AppWidgetProvider {
 
         // Lager 3: texten, sträckt att fylla fönstret minus marginal
         float mx = (winRight - winLeft) * TEXT_INSET, my = (winBottom - winTop) * TEXT_INSET;
-        Bitmap text = renderText(percent + "%", context.getColor(R.color.text));
+        Bitmap text = renderText(percent + "%", settings.textColor());
         canvas.drawBitmap(text, null,
                 new RectF(winLeft + mx, winTop + my, winRight - mx, winBottom - my), paint);
 

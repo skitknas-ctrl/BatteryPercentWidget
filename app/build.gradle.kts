@@ -15,9 +15,9 @@ android {
         minSdk = 31
         targetSdk = 36
         // CI skickar -PbuildNumber=<körningsnummer>; versionen blir då 1.1.<n>
-        val baseVersion = "1.1"
+        val baseVersion = "1.2"
         val buildNumber = (project.findProperty("buildNumber") as String?)?.toIntOrNull()
-        versionCode = if (buildNumber != null) 100 + buildNumber else 2
+        versionCode = if (buildNumber != null) 100 + buildNumber else 3
         versionName = if (buildNumber != null) "$baseVersion.$buildNumber" else baseVersion
         buildConfigField("String", "BUILD_DATE", "\"$buildDate\"")
     }
