@@ -17,8 +17,14 @@ android {
         // CI skickar -PbuildNumber=<körningsnummer>; versionen blir då 1.1.<n>
         val baseVersion = "1.2"
         val buildNumber = (project.findProperty("buildNumber") as String?)?.toIntOrNull()
-        versionCode = if (buildNumber != null) 100 + buildNumber else 3
-        versionName = if (buildNumber != null) "$baseVersion.$buildNumber" else baseVersion
+        // Officiell utgåva. F-Droid bygger från taggen release-<versionName>, utan buildNumber.
+        versionCode = 1300
+        versionName = "1.3.0"
+        if (buildNumber != null) {
+            // testbygge från CI
+            versionCode = 100 + buildNumber
+            versionName = "$baseVersion.$buildNumber"
+        }
         buildConfigField("String", "BUILD_DATE", "\"$buildDate\"")
     }
     signingConfigs {

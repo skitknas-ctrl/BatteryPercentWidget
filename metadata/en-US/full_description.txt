@@ -1,0 +1,9 @@
+Battery Percent Widget shows the battery level as a large percentage on a battery-shaped gauge on your home screen.
+
+* Updates when the charger is connected or disconnected, when the battery runs low and after a restart
+* Settings for the brightness and opacity of the gauge, the colour and opacity of the text, and the size
+* Resizable
+
+The only permission is to start after a restart. The app has no network access, no ads and no tracking.
+
+The app's own screens are in Swedish. Requires Android 12 or later.
